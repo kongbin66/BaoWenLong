@@ -57,8 +57,8 @@ void FFS_fromat()
 }
 //核对系统时间
 void sys_time()
-{ 
-  //111111screen_loopEnabled = false;           
+{
+  //111111screen_loopEnabled = false;
   setupModem();
   modemToGPRS();
   if (getLBSLocation())
@@ -66,3 +66,29 @@ void sys_time()
   //11111screen_loopEnabled = false;
   screenState = MAIN_TEMP_SCREEN;
 }
+
+void switch_sleep(bool x)
+{
+     // if (oledState == OLED_ON)
+      if (!x)
+  {
+    oledState = OLED_OFF;
+    display.displayOff();
+    Serial.println("displayOff");
+       eeprom_config_save_parameter();
+    delay(500);
+   // esp_sleep_enable_ext0_wakeup(WEAKUPKEY1, LOW); //使能按键唤醒
+    esp_sleep_enable_ext0_wakeup(WEAKUPKEY2, LOW); //使能按键唤醒
+    digitalWrite(MODEM_POWER_ON, LOW);
+    gpio_hold_en(GPIO_NUM_32);                     //锁定电源管脚
+    gpio_deep_sleep_hold_en();
+    esp_deep_sleep_start();
+  }
+  else 
+  {
+    display.displayOn();
+    oledState = OLED_ON;
+    Serial.println("displayOn");
+  }
+}
+

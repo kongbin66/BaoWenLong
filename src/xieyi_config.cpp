@@ -4,6 +4,7 @@
 void SET_SLEEPTIME(time_t t);
 
 void set_fxmode(char ,char,char);
+void switch_sleep(bool x);
 void read_list();
 void jiexi_lose(bool);
 void set_dbug(uint8_t a);
@@ -24,6 +25,7 @@ void test(int);
   NAME_TAB name_tab[]=
  {
 	  (void*)SET_SLEEPTIME,                                   {0xaa,0x00, 1, 1, 1, 1, 0, 0,0,0, 0xbb},
+	  (void*)switch_sleep,                                    {0xaa,0x01, 1, 0, 0, 0, 0, 0,0,0, 0xbb},
 	  (void*)set_fxmode,                                      {0xaa,0x02, 1, 2, 3, 0, 0, 0,0,0, 0xbb},
       (void*)read_list,                                       {0xaa,0x03, 1, 2, 3, 0, 0, 0,0,0, 0xbb},
 	  (void*)jiexi_lose,                                      {0xaa,0x04, 0, 0, 0, 0, 0, 0,0,0, 0xbb},

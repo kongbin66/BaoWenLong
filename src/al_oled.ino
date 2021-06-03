@@ -68,6 +68,7 @@ void showStatusBar()
 void showTemp()
 {
   char tempParam[32];
+ // Serial.printf("currentTemp=%f\n",currentTemp);
   sprintf(tempParam, "%.1f°C", currentTemp);
   display.clear();
   showStatusBar();
@@ -230,63 +231,33 @@ void show_recStop_Screen()
   display.drawXbm(100, 20, 24, 24, tips_lu3);
   display.display();
 }
-// //屏幕状态机循环
-// void screen_loop()
-// {
-//   if (screen_loopEnabled)
-//   {
-//     loopnowTime = millis();
-//     looptimeSpan = loopnowTime - loopStartTime;
 
-
-//     switch (looptimeSpan)
-//     {
-//     case 0 ... 5000:
-//       screenState = MAIN_TEMP_SCREEN;
-//       break;
-//     case 5001 ... 5200:
-//       screenState = TEMP_HUMI_SCROLL_SCREEN;
-//       break;
-//     case 5201 ... 9800:
-//       screenState = MAIN_HUMI_SCREEN;
-//       break;
-//     case 9801 ... 10000:
-//       screenState = HUMI_TEMP_SCROLL_SCREEN;
-//       break;
-//     case 10001 ... INT_MAX:
-//       loopStartTime = millis();
-//       screenState = MAIN_TEMP_SCREEN;
-//       break;
-//     default:
-//       break;
-//     }
-//   }
-// }
 
 
 
 void screen_show()
 {
+
   switch (screenState)
   {
   case MAIN_TEMP_SCREEN:
     showTemp();
     break;
-  case TEMP_HUMI_SCROLL_SCREEN:
-    temp_humi_Scroll();
-    break;
-  case MAIN_HUMI_SCREEN:
-    showHumi();
-    break;
-  case HUMI_TEMP_SCROLL_SCREEN:
-    temp_humi_Scroll();
-    break;
+  // case TEMP_HUMI_SCROLL_SCREEN:
+  //   temp_humi_Scroll();
+  //   break;
+  // case MAIN_HUMI_SCREEN:
+  //   showHumi();
+  //   break;
+  // case HUMI_TEMP_SCROLL_SCREEN:
+  //   temp_humi_Scroll();
+  //   break;
   case TIPS_SCREEN:
     keyScreen_Now = sys_sec;
     if (keyScreen_Now - keyScreen_Start < show_tip_screen_last)
       showTips_Screen();
     else
-      //1111111screen_loopEnabled = false;
+     
       screenState = MAIN_TEMP_SCREEN;
     break;
 
@@ -296,7 +267,7 @@ void screen_show()
     if (keyScreen_Now - keyScreen_Start < show_BLE_screen_last)
        showfxms_Screen1();
     else
-      //1111111screen_loopEnabled = false;
+    
       screenState = MAIN_TEMP_SCREEN;
     break;
 
@@ -305,7 +276,7 @@ void screen_show()
     if (keyScreen_Now - keyScreen_Start < show_BLE_screen_last)
        showfxms_Screen2();   
     else
-      //1111111screen_loopEnabled = false;
+      
       screenState = MAIN_TEMP_SCREEN;
     break;
 
@@ -314,7 +285,7 @@ void screen_show()
     
     keyScreen_Now = sys_sec;
     if(keyScreen_Now-keyScreen_Start<show_rec_stop_screen_last) show_recStart_Screen();
-    else  //1111111screen_loopEnabled = false;
+    else 
       screenState = MAIN_TEMP_SCREEN;
   
     break;
@@ -323,7 +294,7 @@ void screen_show()
     if (keyScreen_Now - keyScreen_Start < show_rec_stop_screen_last) show_recStop_Screen();
     else if (keyState != LONGPRESS_DURRING)
     {
-      //1111111screen_loopEnabled = false;
+      
       screenState = MAIN_TEMP_SCREEN;
     }
 

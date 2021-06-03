@@ -23,7 +23,7 @@ bool sendTempAndHumi()
     jsonBuf[i] = 0;
   }
   //确定数据
-  sht20getTempAndHumi();
+  get18b20Temp();
   if ((f_locat == 1) && (locationE != locationE_))
   {
     locationN = locationN_;

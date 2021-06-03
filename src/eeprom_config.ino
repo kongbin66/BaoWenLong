@@ -29,12 +29,15 @@
  * 43                       4                   screen_On_last_span                    亮屏时间
  
  * ************************************************************/
+//获取是否是首次开机
 void get_eeprom_firstBootFlag()
 { 
   firstBootFlag =(EEPROM.read(1) == 1 ? false : true);
   Serial.printf("EEPROM 1: %d \r\n", firstBootFlag);
 }
-
+//根据开机状态初始化EEPROM
+//首次开机按config默认值初始化eeprom
+//否者，读取eeprom设备设定值
 void eeprom_config_init()
 {
   if (firstBootFlag)
@@ -54,8 +57,8 @@ void eeprom_config_init()
     EEPROM.commit();
     firstBootFlag = false;
 
-    screen_On_Start = sys_sec;
-    screen_On_now = sys_sec;
+    // screen_On_Start = sys_sec;
+    // screen_On_now = sys_sec;
   }
   else
   {
@@ -65,20 +68,13 @@ void eeprom_config_init()
     tempLimit_enable =  EEPROM.read(10) == 0 ? false : true;
     tempUpperLimit =    EEPROM.readFloat(11);              Serial.printf("tempUpperLimit:%.2f\r\n", tempUpperLimit);
     tempLowerLimit =    EEPROM.readFloat(15);              Serial.printf("tempLowerLimit:%.2f\r\n", tempLowerLimit);
-    last_rec_stamp =    (time_t)EEPROM.readLong(39);       Serial.printf("last_rec_stamp:%ld\r\n", last_rec_stamp);
-
-   
-    //处理时间
-    Serial.printf("time now: %d-%d-%d %d:%d:%d\r\n", now1.year, now1.month, now1.day,now1.hour, now1.minute, now1.second);
- 
   }
 }
-
+//记忆设定值
 void eeprom_config_save_parameter(void)
 {
     EEPROM.writeInt(2, sleeptime);
-    EEPROM.write(10, FACTORY_TEMP_LIMIT_ENABLE);
-    EEPROM.writeULong(39, last_rec_stamp);
-
+   // EEPROM.write(10, FACTORY_TEMP_LIMIT_ENABLE);
+    
     EEPROM.commit();
 }

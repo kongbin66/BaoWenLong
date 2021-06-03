@@ -12,6 +12,7 @@ void codeForTask1(void *parameter)
   {
     vTaskDelay(10);
     button.tick(); //扫描按键
+    button2.tick();
   }
   vTaskDelete(NULL);
 }
@@ -48,11 +49,24 @@ void xieyi_Task(void *parameter)
   vTaskDelete(NULL);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 /*****************************************************************************************************************/
 void setup()
 {
   gpio_hold_dis(GPIO_NUM_32); //解锁电源引脚
   gpio_deep_sleep_hold_dis();
+ 
 
   hardware_init();            //硬件初始化
   get_eeprom_firstBootFlag(); //获取EEPROM第1位,判断是否是初次开机
@@ -98,12 +112,33 @@ void loop()
 {
   if (oledState == OLED_ON)
   {
-    sht20getTempAndHumi();
+    get18b20Temp();
     key_loop();
     screen_show(); //OLED最终显示
     send_Msg_var_GSM_while_OLED_on(1);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*****************************************************************************************
  *                            //发送数据
@@ -148,7 +183,7 @@ void send_Msg_var_GSM_while_OLED_on(bool a)
         display.display();
       }
       Serial.printf("huoqu shijian weizhi %d!\n", getLBSLocation()); //获取时间位置正确,发送时间位置
-      sht20getTempAndHumi();
+      get18b20Temp();
       alFFS_savelist();
       if (dbug)
         Serial.println("duquwendu,jiyiLIST OK!");
@@ -293,4 +328,14 @@ void send_Msg_var_GSM_while_OLED_on(bool a)
     screen_On_Start = sys_sec;
     screen_On_now = sys_sec;
   }
+}
+
+
+void aaa()
+{
+  /* gpio32 route to digital io_mux */
+REG_CLR_BIT(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_X32P_MUX_SEL);
+
+/* gpio33 route to digital io_mux */
+REG_CLR_BIT(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_X32N_MUX_SEL);
 }

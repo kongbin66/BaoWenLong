@@ -134,7 +134,7 @@ void alFFS_savelist()
     locationA=locationA_; 
     Serial.printf("Temp=%f,Humi=%f,Time=%d,locationE=%f,locationN=%f.\n", currentTemp, currentHumi, now_unixtime, locationE, locationN);
   }
-  sht20getTempAndHumi();
+  get18b20Temp();
 
   //2.写入到list文件
   if (list_first_flag) //第一次发送写
@@ -263,7 +263,7 @@ void alFFS_savelose()
   File f;
   uint8_t a[4];          //写入缓存
   //确定数据
-  sht20getTempAndHumi(); //读取温湿度，
+  get18b20Temp(); //读取温湿度，
   if((f_locat==1)&&(locationE!=locationE_))
   {
     locationN=locationN_;
@@ -546,7 +546,7 @@ void lose_tiancong()
 
   //数据处理
   char a[8];
-  sht20getTempAndHumi(); //读取温湿度，
+  get18b20Temp(); //读取温湿度，
   int temp = 1;          //(int)(currentTemp* 100); //温度值currentTemp
   int hum = 1;           //(int)(currentHumi * 100);  //湿度currentHumi
   uint32_t uinxt = 1;    //unixtime();
@@ -765,230 +765,3 @@ void jiexi_lose(bool a)
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// void alFFS_addRec()
-// {
-//   char tempStr[15];
-//   char tempStrtemplate[] = "%d%02d%02d %02d:%02d";
-//   snprintf(tempStr, sizeof(tempStr), tempStrtemplate, now1.year, now1.month, now1.day, now1.hour, now1.minute);
-//   Serial.print("DATE:");
-//   Serial.println(tempStr);
-//   Serial.print("now the alFFS_thisRec_firstData_flag value is :");
-//   Serial.println(alFFS_thisRec_firstData_flag);
-//   if (alFFS_thisRec_firstData_flag)
-//   {
-//     alFFS_thisRec_firstData_flag = false;
-//     Serial.println("first rec, so create a file named:");
-//     char tempPathtemplate[] = "/R%d%02d%02d_%02d%02d.json";
-//     snprintf(nowREC_filepath, 21, tempPathtemplate, now1.year, now1.month, now1.day, now1.hour, now1.minute);
-//     Serial.println(nowREC_filepath);
-//     Serial.println("now first write content to it");
-//     File f = SPIFFS.open(nowREC_filepath, FILE_WRITE);
-//     String strtemp = "{\"st\":\"" + (String)tempStr +
-//                      "\",\"data\": [{\"tm\":\"" + (String)tempStr +
-//                      "\",\"tmsp\":" + (String)(unixtime()) + //- 8 * 60 * 60
-//                      ",\"tp\":" + (String)currentTemp +
-//                      ",\"h\":" + (String)currentHumi +
-//                      ",\"E\":" + (String)locationE +
-//                      ",\"N\":" + (String)locationN +
-//                      "}";
-//     f.println(strtemp);
-//     Serial.println("ADD:" + strtemp);
-//     f.close();
-//     alFFS_thisRec_firstData_flag = 0;
-//   }
-//   else
-//   {
-//     Serial.println("not the first rec, so i can just append some content in to the file:");
-//     Serial.println(nowREC_filepath);
-//     File f = SPIFFS.open(nowREC_filepath, FILE_APPEND);
-//     String strtemp = ",{\"tm\":\"" + (String)tempStr +
-//                      "\",\"tmsp\":" + (String)(unixtime() - 8 * 60 * 60) +
-//                      ",\"tp\":" + (String)currentTemp +
-//                      ",\"h\":" + (String)currentHumi +
-//                      ",\"E\":" + (String)locationE +
-//                      ",\"N\":" + (String)locationN +
-//                      "}";
-//     f.println(strtemp);
-//     Serial.println("ADD:" + strtemp);
-//     f.close();
-//   }
-// }
-
-// void alFFS_readRecing()
-// {
-//   File f = SPIFFS.open(nowREC_filepath, FILE_READ);
-//   // String strtemp;
-//   // strtemp = f.readString();
-//   Serial.println("read out the file:");
-//   Serial.println(f.readString());
-//   Serial.println("Size of json_file :" + (String)(f.size()) + "B");
-//   Serial.println("Size of json_file :" + (String)(f.size() / 1024.0) + "KB");
-//   Serial.println("Size of json_file :" + (String)((f.size() / 1024.0) / 1024.0) + "MB");
-//   Serial.printf("use:%dB\n", SPIFFS.totalBytes());
-// }
-
-// void alFFS_endRec()
-// {
-//   char tempStr[15];
-//   char tempStrtemplate[] = "%d%02d%02d %02d:%02d";
-//   snprintf(tempStr, 15, tempStrtemplate, now1.year, now1.month, now1.day, now1.hour, now1.minute);
-//   Serial.print("DATE:");
-//   Serial.println(tempStr);
-//   File f = SPIFFS.open(nowREC_filepath, FILE_APPEND);
-//   String strtemp = "],\"et\":\"" + (String)tempStr + "\"}";
-//   f.println(strtemp);
-//   Serial.println("ADD:" + strtemp);
-//   f.close();
-//   alFFS_readRecing();
-// }
-//保存到LOSE文件
-// {
-// Data:
-//   [{
-//    “temp”: 26.32,
-//    “humi”: 54.55,
-//    “time”: 9995959544},
-//    {
-//    “temp”: 26.32,
-//    “humi”: 54.55,
-//    “time”: 9995959544}]
-// }
-// /*****************************************************************************************
-//  *
-//  *                            //保存到LOSE文件
-// ******************************************************************************************/
-
-// void alFFS_savelose()
-// {
-//   sht20getTempAndHumi(); //读取温湿度，
-
-//   //保存数据
-//   if (lose_first_flag)
-//   {
-//     Serial.println("lose is first rec");
-//     lose_first_flag = 0;
-//     //发送头
-//     String bb = "{\"data\":[{\"temp\":" + (String)currentTemp +
-//                 ",\"humi\":" + (String)currentHumi +
-//                 ",\"time\":" + (String)(unixtime()) +
-//                 "}";
-//     File f = SPIFFS.open("/lose.json", FILE_WRITE);
-//     f.println(bb);
-//     f.close();
-//     alFFS_readlose();
-//     lose_count++;
-//     if (dbug)
-//       Serial.printf("lose_cout:%d\n", lose_count);
-//   }
-//   else
-//   {
-//     Serial.println("lose not the first rec");
-//     lose_first_flag = 0;
-
-//     String bb = ",{\"temp\":" + (String)currentTemp +
-//                 ",\"humi\":" + (String)currentHumi +
-//                 ",\"time\":" + (String)(unixtime()) +
-//                 "}";
-//     File f = SPIFFS.open("/lose.json", FILE_APPEND);
-
-//     f.println(bb);
-//     f.close();
-//     alFFS_readlose();
-//     lose_count++;
-//     if (dbug)
-//       Serial.printf("lose_cout:%d\n", lose_count);
-//   }
-// }
-//json读lose文件
-// void alFFS_readlose()
-// {
-//   File f = SPIFFS.open("/lose.json", FILE_READ);
-//   Serial.println("lose file size:" + (String)f.size());
-//   losestr1 = f.readString() + "]}";
-//   Serial.println(losestr1);
-//   f.close();
-// }
